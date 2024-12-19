@@ -7,20 +7,16 @@
 
 pip install Adafruit-DHT
 
-
-코드: DHT22 센서 데이터 읽기
+코드 
 
 import Adafruit_DHT
 import time
 
-# DHT22 센서 타입과 GPIO 핀 설정
 sensor = Adafruit_DHT.DHT22
-pin = 4  # DHT22 센서가 연결된 GPIO 핀 번호
+pin = 4
 
 def read_temperature_humidity():
-    # 온도와 습도 읽기
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
-    
     if humidity is not None and temperature is not None:
         print(f"Temperature: {temperature:.1f}C")
         print(f"Humidity: {humidity:.1f}%")
@@ -29,44 +25,35 @@ def read_temperature_humidity():
         print("Failed to retrieve data from sensor")
         return None, None
 
-# 5초마다 온도와 습도를 읽어오는 반복문
 while True:
     temperature, humidity = read_temperature_humidity()
     time.sleep(5)
-
 
 # 온도 조절 시스템 (난방/냉방 제어)
 위에서 얻은 온도 값을 바탕으로 난방/냉방 장치를 제어하는 코드입니다. 릴레이 모듈을 사용해 난방기나 에어컨을 제어합니다.
 
 import RPi.GPIO as GPIO
 
-# 릴레이 모듈 GPIO 핀 설정
-relay_pin_heat = 17  # 난방기 제어 핀
-relay_pin_cool = 27  # 에어컨 제어 핀
+relay_pin_heat = 17
+relay_pin_cool = 27
 
-# GPIO 설정
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(relay_pin_heat, GPIO.OUT)
 GPIO.setup(relay_pin_cool, GPIO.OUT)
 
 def control_temperature(temperature, target_temperature):
-    if temperature < target_temperature - 1:  # 설정 온도보다 낮으면 난방
-        print("Turning on heater...")
-        GPIO.output(relay_pin_heat, GPIO.HIGH)  # 난방기 켜기
-        GPIO.output(relay_pin_cool, GPIO.LOW)   # 에어컨 끄기
-    elif temperature > target_temperature + 1:  # 설정 온도보다 높으면 냉방
-        print("Turning on cooler...")
-        GPIO.output(relay_pin_heat, GPIO.LOW)   # 난방기 끄기
-        GPIO.output(relay_pin_cool, GPIO.HIGH)  # 에어컨 켜기
+    if temperature < target_temperature - 1:
+        GPIO.output(relay_pin_heat, GPIO.HIGH)
+        GPIO.output(relay_pin_cool, GPIO.LOW)
+    elif temperature > target_temperature + 1:
+        GPIO.output(relay_pin_heat, GPIO.LOW)
+        GPIO.output(relay_pin_cool, GPIO.HIGH)
     else:
-        print("Temperature is optimal, no need to adjust.")
-        GPIO.output(relay_pin_heat, GPIO.LOW)   # 난방기 끄기
-        GPIO.output(relay_pin_cool, GPIO.LOW)   # 에어컨 끄기
+        GPIO.output(relay_pin_heat, GPIO.LOW)
+        GPIO.output(relay_pin_cool, GPIO.LOW)
 
-# 예시: 목표 온도 22도 설정
 target_temperature = 22
 
-# 5초마다 온도 측정 후 제어
 while True:
     temperature, humidity = read_temperature_humidity()
     if temperature:
@@ -85,18 +72,15 @@ import time
 
 app = Flask(__name__)
 
-# DHT22 센서 설정
 sensor = Adafruit_DHT.DHT22
 pin = 4
 
-# 릴레이 모듈 설정
 relay_pin_heat = 17
 relay_pin_cool = 27
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(relay_pin_heat, GPIO.OUT)
 GPIO.setup(relay_pin_cool, GPIO.OUT)
 
-# 온도 및 습도 읽기
 def read_temperature_humidity():
     humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
     if humidity is not None and temperature is not None:
@@ -104,7 +88,6 @@ def read_temperature_humidity():
     else:
         return None, None
 
-# 온도 조절
 def control_temperature(temperature, target_temperature):
     if temperature < target_temperature - 1:
         GPIO.output(relay_pin_heat, GPIO.HIGH)
@@ -130,7 +113,7 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
 
 
-HTML 코드 (templates/index.html)
+# HTML 코드 (templates/index.html)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -161,23 +144,19 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import time
 
-# 예시 데이터 (시간대와 선호 온도)
-# X: 시간대 (24시간 포맷), y: 선호 온도
-X = np.array([[8], [12], [18], [22]])  # 시간대 (8시, 12시, 18시, 22시)
-y = np.array([20, 22, 24, 21])  # 선호 온도
+X = np.array([[8], [12], [18], [22]])
+y = np.array([20, 22, 24, 21])
 
-# 선형 회귀 모델 훈련
 model = LinearRegression()
 model.fit(X, y)
 
 def predict_temperature(hour):
     return model.predict([[hour]])[0]
 
-# 예시: 현재 시간에 따라 온도 예측
 while True:
-    current_hour = time.localtime().tm_hour  # 현재 시간
+    current_hour = time.localtime().tm_hour
     predicted_temp = predict_temperature(current_hour)
     print(f"Predicted Temperature for {current_hour}:00 is {predicted_temp:.1f}°C")
-    time.sleep(3600)  # 한 시간마다 예측
+    time.sleep(3600)
 
 
