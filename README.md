@@ -113,27 +113,6 @@ if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
 
 
-# HTML 코드 (templates/index.html)
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Temperature Control</title>
-</head>
-<body>
-    <h1>Smart Temperature Control</h1>
-    <p>Current Temperature: {{ temperature }}°C</p>
-    <p>Current Humidity: {{ humidity }}%</p>
-
-    <form method="POST">
-        <label for="target_temperature">Set Target Temperature: </label>
-        <input type="number" id="target_temperature" name="target_temperature" required>
-        <button type="submit">Set Temperature</button>
-    </form>
-</body>
-</html>
 
 
 # AI 기반 온도 조절 (생활 패턴 분석)
